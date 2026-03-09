@@ -34,6 +34,7 @@ resource "aws_security_group" "web" {
 resource "aws_instance" "web" {
   ami           = data.aws_ssm_parameter.ami.value
   instance_type = "t3.micro"
+  key_name      = var.key_name
 
   security_groups = [aws_security_group.web.name]
 

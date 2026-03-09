@@ -57,16 +57,19 @@ jobs:
         working-directory: terraform
         env:
           TF_VAR_region: ${{ secrets.AWS_REGION }}
+          TF_VAR_key_name: anmol-keypair
         run: terraform init -input=false
 
       - name: Terraform Validate
         working-directory: terraform
         env:
           TF_VAR_region: ${{ secrets.AWS_REGION }}
+          TF_VAR_key_name: anmol-keypair
         run: terraform validate
 
       - name: Terraform Apply
         working-directory: terraform
         env:
           TF_VAR_region: ${{ secrets.AWS_REGION }}
+          TF_VAR_key_name: anmol-keypair
         run: terraform apply -auto-approve -input=false
