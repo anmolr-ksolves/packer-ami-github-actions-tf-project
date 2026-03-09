@@ -12,8 +12,8 @@ locals {
 }
 
 source "amazon-ebs" "nginx" {
-  region        = "us-east-1"
-  source_ami    = "ami-0b6c6ebed2801a5cb"
+  region        = "ap-south-1"
+  source_ami    = "ami-019715e0d74f695be"
   instance_type = "t3.micro"
   ssh_username  = "ubuntu"
 
