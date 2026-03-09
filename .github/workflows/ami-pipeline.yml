@@ -1,0 +1,50 @@
+name: Build AMI
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build-ami:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Packer
+        uses: hashicorp/setup-packer@main
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: us-east-1
+          role-to-assume: arn:aws:iam::123456789012:role/github-actions-role
+
+      - name: Packer Init
+        run: |
+          cd packer
+          packer init .
+
+      - name: Packer Validate
+        run: |
+          cd packer
+          packer validate .
+
+      - name: Build AMI
+        run: |
+          cd packer
+          packer build .
+
+      - name: Extract AMI ID
+        run: |
+          AMI_ID=$(jq -r '.builds[-1].artifact_id' packer/manifest.json | cut -d: -f2)
+          echo "AMI_ID=$AMI_ID" >> $GITHUB_ENV
+
+      - name: Store AMI in SSM
+        run: |
+          aws ssm put-parameter \
+          --name "/nginx/latest-ami" \
+          --type String \
+          --value "$AMI_ID" \
+          --overwrite
